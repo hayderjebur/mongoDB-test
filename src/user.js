@@ -7,11 +7,31 @@ const PointSchema =new Schema({
 })
 
 
-const DeriverSchema = new Schema({
+const DriverSchema = new Schema({
   name: String,
   geometry: PiontSchema
 });
 
-const User = mongoose.model("user", UserSchema);
+const Driver = mongoose.model("driver", DriverSchema);
 
-module.exports = User;
+module.exports = Driver;
+
+
+//IN Server the route like:
+ Driver.aggregate([
+      {
+        $geoNear: {
+          near: {
+            type: "Point",
+            coordinates: [parseFloat(lng), parseFloat(lat)]
+          },
+          maxDistance: 200000,
+          spherical: true,
+          distanceField: "dist.calculated"
+        }
+      }
+    ])
+    .then(drivers => res.send(drivers))
+    .catch(next);
+  },
+
